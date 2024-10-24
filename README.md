@@ -94,43 +94,43 @@ yarn build
 ```
 interface IItem {
   id: string;
-	title: string;
-	description: string;
-	price: number | null;
-	category: string;
-	image: string;
+  title: string;
+  description: string;
+  price: number | null;
+  category: string;
+  image: string;
 }
 ```
 Каталог товаров
 
 ```
 interface IItemData {
-	items: IItem[];
-	preview: string | null;
-	getItem(itemId: string): IItem;
+  items: IItem[];
+  preview: string | null;
+  getItem(itemId: string): IItem;
 }
 ```
 Данные пользователя
 
 ```
 interface IUserData {
-	payment?: string;
-	email?: string;
-	phone?: string;
-	address?: string;
-	total?: number;
-	items?: string[];
+  payment?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  total?: number;
+  items?: string[];
 }
 ```
 Корзина
 
 ```
 interface IBasketData {
-	items: [IItem];
-	total: number;
-	getTotal(items: [IItem]): number;
-	add(id: string): void;
-	remove(id: string): void;
-	checkItem(id: string): boolean;
+  items: [IItem];
+  total: number;
+  getTotal(items: [IItem]): number;
+  add(id: string): void;
+  remove(id: string): void;
+  checkItem(id: string): boolean;
 }
 ```
