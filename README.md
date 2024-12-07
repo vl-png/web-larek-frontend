@@ -51,42 +51,46 @@ yarn build
 ### Слой данных (Model)
 Отвечает за хранение и управление данными приложения.
 
-#### ItemsData: Класс для работы с данными товаров. Предоставляет методы для получения списка товаров, получения информации о конкретном товаре и т.д.
+#### DataModel: Класс для работы с данными товаров.
 
   Атрибуты:
 
-  - `_itemsResponse: IItem[]` Массив объектов, представляющих товары, загруженные с сервера.
-  - `_preview: string | null` Идентификатор товара, который выбран для предпросмотра.
-  - `events: IEvents`
+  - `store: IProduct[]` Массив объектов, представляющих товары, загруженные с сервера.
 
-####  UserData: Класс для работы с данными пользователя. Хранит информацию о заказе, способе оплаты, адресе и контактных данных пользователя.
+Методы:
+
+  - `setStore(items: IProduct[]): void` Обновляет данные товаров.
+  - `resetSelected(): void` Сброс состояния выбора.
+
+####  FormModel: Класс для работы с данными форм. Хранит информацию о заказе, способе оплаты, адресе и контактных данных пользователя.
 
   Атрибуты:
 
-  - `data: IUserData` Объект, содержащий данные пользователя и иформация о заказе.
+  - `order: IOrder` Информация о заказе покупке товара.
+  - `formErrors: FormErrors` Ошибки при заполнении форм.
 
   Методы:
 
-  - `updateData(): void` Обновляет данные пользователя.
-  - `getData(): IUserData` Возвращает данные пользователя.
+  - `setItems(): void` Добавляет товары в заказ.
+  - `setOrderField(field: keyof IOrderForm, value: string): void` Заполнение всех пользовательских данных в заказе.
+  - `validateContacts(): boolean` Валидация контактов.
+  - `validateOrder(): boolean` Валидация заказа.
+  - `clearOrder(): void` Очистить после покупки.
 
-#### BasketData: Класс для работы с корзиной покупок. Предоставляет методы для добавления/удаления товаров в корзину, подсчета общей стоимости и т.д.
+
+#### BasketModel: Класс для работы с корзиной покупок. Предоставляет методы для добавления/удаления товаров в корзину, подсчета общей стоимости и т.д.
 
   Атрибуты:
 
-  - `items: IItem[]` Массив товаров, добавленных в корзину.
-  - `events: IEvents`
+  - `basket: IProduct[]` Информация о заказе покупке товара.
 
   Методы:
 
-  - `addItem(item: IItem): void` Добавляет товар в корзину.
-  - `removeItem(id: string): void` Удаляет товар из корзины.
-  - `isInBasket(id: string): boolean` Проверяет, находится ли товар в корзине.
-  - `getItems(): IItem[]` Возвращает текущий массив товаров в корзине.
-  - `getTotalItems(): number` Возвращает общее количество товаров в корзине.
-  - `getTotalPrice(): number` Возвращает общую стоимость товаров в корзине.
-  - `clearBasket(): void` Очищает корзину.
-  - `updateBasket(): void` Обновляет состояние корзины.
+  - `addToBasket(value: IProduct): void` Добавляет товар в корзину.
+  - `deleteFromBasket(id: string): void` Удаляет товар из корзины.
+  - `clearBasket(): void` Отчистка корзины.
+  - `getBasketAmount(): number` Получение количества товаров в корзине.
+  - `getTotalBasketPrice(): number` Сумма всех товаров в корзине.
 
 ### Слой представления (View)
 Отвечает за отображение пользовательского интерфейса и взаимодействие с пользователем.
@@ -101,109 +105,95 @@ yarn build
 
   - `render(): HTMLElement`
   - `setText(element: HTMLElement, value: unknown): void`
+  
 
-#### Item: Компонент для отображения карточки товара.
-
-  Атрибуты:
-
-  - `template: HTMLElement`
-  - `events: IEvents`
-
-  Методы:
-
-  - сеттеры - отвечают за присвоение данных атрибутам элементов карточки товара.
-  - `get id(): string` Возвращает идентификатор товара.
-
-#### ItemContainer: Компонент для отображения списка товаров.
+#### Card: Компонент описывающий карточку товара.
 
   Атрибуты:
 
-  - `modal: HTMLElement` HTML элемент модального окна.
-  - `events: IEvents`
+  - `_title: HTMLElement` Элемент заголовка карточки.
+  - `_image: HTMLImageElement` Элемент изображения карточки.
+  - `_category: HTMLElement` Элемент категории карточки.
+  - `_price: HTMLElement` Элемент цены карточки.
+  - `_button: HTMLButtonElement` Элемент кнопки карточки.
+  - `_colors: ICard['colors']` Объект, содержащий классы для различных категорий.
 
   Методы:
 
-  - `open(): void` Открывает модальное окно.
-  - `close(): void` Закрывает модальное окно.
+- Сеттеры и геттеры — отвечают за присвоение данных атрибутам элементов карточки товара, а также за получение значений этих атрибутов
 
-#### ModalWithItem: Компонент для отображения модального окна с подробной информацией о товаре и возможностью добавления в корзину.
+
+#### Basket: Компонент описывающий корзину товаров.
 
   Атрибуты:
 
-  - `addButton: HTMLButtonElement` Кнопка для добавления товара в корзину.
-  - `itemCategory: HTMLSpanElement` Элемент, отображающий категорию товара.
-  - `itemTitle: HTMLElement` Элемент, отображающий название товара.
-  - `itemImage: HTMLImageElement` Элемент, отображающий изображение товара.
-  - `itemPrice: HTMLSpanElement` Элемент, отображающий цену товара.
-  - `itemDescription: HTMLElement` Элемент, отображающий описание товара.
-  - `currentItem: IItem | null` Текущий выбранный товар или null, если товар не выбран.
-  - `basketData: BasketData` Объект данных корзины для взаимодействия с корзиной.
+  - `_list: HTMLElement` Элемент содержащий список товаров в корзине.
+  - `_price: HTMLElement` Элемент отображающий общую цену товаров.
+  - `_button: HTMLButtonElement` Кнопка оформления заказа.
 
   Методы:
 
-  - `set itemData(item: IItem)` Устанавливает данные текущего товара и обновляет отображение в модальном окне.
-  - `updateButtonState(): void` Обновляет состояние кнопки добавления в корзину.
+  - Сеттеры для атрибутов.
+  - `disableButton()` Метод отключающий кнопку.
+  - `updateItemIndices()` Метод для обновления индексов товаров в списке при их удалении.
 
-#### ModalWithBasket: Компонент для отображения модального окна с содержимым корзины и возможностью оформления заказа.
+
+#### Modal: Компонент описывающий корзину товаров.
 
   Атрибуты:
 
-  - `basketList: HTMLUListElement` Элемент списка для отображения товаров в корзине.
-  - `basketTotalPrice: HTMLElement` Элемент для отображения общей стоимости товаров в корзине.
-  - `checkoutButton: HTMLButtonElement` Кнопка для перехода к оформлению заказа.
+  - `_closeButton: HTMLButtonElement` Кнопка закрытия модального окна.
+  - `_content: HTMLElement` Элемент, содержащий контент модального окна.
 
   Методы:
 
-  - `createBasketItem(itemData: IItem, index: number): HTMLElement` Создает элемент для отображения товара в корзине.
+  - `set content(value: HTMLElement)` Метод устанавливает контент для модального окна.
+  - `open()` Метод для открытия модального окна.
+  - `close()` Метод для закрытия модального окна.
+
 
 #### Form: Реализует общий компонент формы.
 
   Атрибуты:
 
-  - `inputs: HTMLInputElement` Список всех полей ввода формы.
-  - `form: HTMLFormElement` Элемент формы.
-  - `errors: Record<string, string>` Объект для хранения ошибок валидации.
-  - `formName: string` Поле name формы.
-  - `submitButton: HTMLButtonElement` Кнопка отправки формы.
-  - `errorSpan: HTMLElement` Элемент для отображения сообщений об ошибках.
+  - `_submit: HTMLButtonElement` КнопкА отправки формы.
+  - `_errors: HTMLElement` Контейнер для отображения сообщений об ошибках.
 
   Методы:
 
-  - `getInputValues(): Record<string, string>` Собирает и возвращает значения всех полей формы в виде объекта.
-  - `setInputValues(data: Record<string, string>): void` Устанавливает значения полей формы из объекта данных.
-  - `set error(data: { field: string, value: string, validInformation: string })` Принимает объект с данными для отображения или сокрытия текстов ошибок.
-  - `showInputError(): void` Отображает ошибки валидации полей формы.
-  - `hideInputError(): void` Скрывает ошибки валидации.
-  - `validateForm(): void` Проводит валидацию всех полей формы.
-  - `set valid(isValid: boolean)` Меняет состояние кнопки отправки формы в зависимости от того валидна форма или нет.
-  - `get form(): HTMLElement` Возвращает элемент формы.
-  - `close(): void` Закрывает форму и и фочищает ее поля.
+  - `onInputChange(field: keyof T, value: string)` Метод обрабатывает изменения в полях ввода и генерирует событие изменения.
+  - `set valid(value: boolean)` Метод устанавливает состояние валидности формы.
+  - `set errors(value: string)` Метод обновляет текст ошибок в контейнере ошибок.
 
-#### OrderForm: Компонент для отображения формы оформления заказа.
 
-  Методы:
-
-  - `validate(): boolean`
-
-#### ContactsForm: Реализует компонент формы контактов.
-
-  Методы:
-
-  - `validate(): boolean`
-
-#### ModalWithSuccess: Компонент для отображения модального окна с успешным оформлением заказа.
+#### Order: Компонент для отображения формы оформления заказа.
 
   Атрибуты:
 
-  - `total: number` Общая сумма заказа.
+  - `_card: HTMLButtonElement` Кнопка для оплаты картой.
+  - `_cash: HTMLButtonElement` Кнопка для оплаты наличными.
+
+  Методы:
+
+  - `disableButtons()` Метод отключает активные состояния кнопок
+
+
+#### Success: Компонент для отображения модального окна с успешным оформлением заказа.
+
+  Атрибуты:
+
+  - `_button: HTMLButtonElement` Кнопка закрытия компонента.
+  - `_description: HTMLElement` Элемент, отображающий описание.
+
+  Методы:
+
+  - `set description(value: number)` Метод устанавливающий описание.
+
 
 ### Слой коммуникации и презентер (Presenter)
 
 Отвечает за связь между слоем данных и слоем представления, а также за обработку бизнес-логики приложения.
 
-#### AppApi: Класс для взаимодействия с сервером и выполнения HTTP-запросов.
-
-Принимает в конструктор экземпляр класса Api и предоставляет методы реализующие взаимодействие с бэкендом сервиса.
 
 #### EventEmitter: Класс для обработки событий и обеспечения взаимодействия между компонентами.
 
@@ -219,62 +209,79 @@ yarn build
 
 Основные события
 
-- `basket:open` Открытии модального окна с корзиной.
-- `initialData:loaded` Загрузка массива товаров.
-- `basket:add-item` Добавлении товара в корзину.
-- `basket:remove-item` Удалении товара из корзины.
-- `basket:update` Обновлении состояния корзины.
-- `basket:order` Подтверждении заказа пользователем.
-- `order:submit` Отправке формы заказа с данными о способе оплаты и адресе.
-- `contact:submit` Отправка данных пользователем.
-- `success:submit` Подтверждении сообщения об успешной покупке в модальном окне.
-- `item:select` Выборе товара для отображения его детальной информации в модальном окне.
-- `item:check-button` Регулирует состояние кнопки.
+- `items:changed` Вызывает перерисовку списка товаров на странице.
+- `card:select` Выбор товара для отображения его детальной информации в модальном окне.
+- `card:toBasket` Добавлении товара в корзину.
+- `basket:delete` Удаление товара из корзины.
+- `basket:open` Открытие модального окна корзины.
+- `basket:order` Открывает окно с формой для заполнения адреса и способа оплаты.
+- `order:submit` Подтверждает заполнение форм в окне Order.
+- `contacts:submit` Подтверждает заполнение форм в окне Contacts.
+- `orderInput:change` Начинает процесс валидации формы.
+- `orderFormErrors:change` Изменилось состояние валидации заказа.
+- `contactsFormErrors:change` Изменилось состояние валидации контактов.
+- `order:success` Открывает модальное окно сообщающее об успешной оплате.
+- `modal:close` Закрытие модального окна.
+
 
 ## Структуры данных и интерфейсы приложения
 
 Товар
 
 ```
-interface IItem {
+interface IProduct {
   id: string;
-  title: string;
   description: string;
-  price: number | null;
-  category: string;
   image: string;
-}
-```
-Каталог товаров
-
-```
-interface IItemData {
-  items: IItem[];
-  preview: string | null;
-  getItem(itemId: string): IItem;
+  title: string;
+  category: CategoryType;
+  price: number | null;
+  selected: boolean;
 }
 ```
 Данные пользователя
 
 ```
-interface IUserData {
+interface IOrder {
+  items?: string[];
   payment?: string;
+  total?: number;
+  address?: string;
   email?: string;
   phone?: string;
-  address?: string;
-  total?: number;
-  items?: string[];
 }
 ```
-Корзина
+Модель корзины
 
 ```
-interface IBasketData {
-  items: [IItem];
-  total: number;
-  getTotal(items: [IItem]): number;
-  add(id: string): void;
-  remove(id: string): void;
-  checkItem(id: string): boolean;
+interface IBasketModel {
+  basket: IProduct[];
+  addToBasket(value: IProduct): void;
+  deleteFromBasket(id: string): void;
+  clearBasket(): void;
+  getBasketAmount(): number;
+  getTotalBasketPrice(): number;
+}
+```
+Модель данных
+
+```
+interface IDataModel {
+	store: IProduct[];
+	setStore(items: IProduct[]): void;
+  resetSelected(): void;
+}
+```
+Модель формы
+
+```
+interface IFormModel {
+	order: IOrder;
+  formErrors: FormErrors;
+	setItems(): void;
+	setOrderField(field: keyof IOrderForm, value: string): void;
+	validateContacts(): boolean;
+	validateOrder(): boolean;
+	clearOrder(): void;
 }
 ```

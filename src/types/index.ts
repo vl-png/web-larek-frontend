@@ -1,32 +1,46 @@
-export interface IItem {
-  id: string;
-  title: string;
-  description: string;
-  price: number | null;
-  category: string;
-  image: string;
+export type CategoryType =
+	| 'другое'
+	| 'софт-скил'
+	| 'дополнительное'
+	| 'кнопка'
+	| 'хард-скил';
+
+export type CategoryMapping = {
+	[Key in CategoryType]: string;
+};
+
+export type FormErrors = Partial<Record<keyof IOrderForm, string>>;
+
+export interface ApiResponse {
+	items: IProduct[];
 }
 
-export interface IItemData {
-  items: IItem[];
-  preview: string | null;
-  getItem(itemId: string): IItem;
+export interface IProduct {
+	id: string;
+	description: string;
+	image: string;
+	title: string;
+	category: CategoryType;
+	price: number | null;
+	selected: boolean;
 }
 
-export interface IUserData {
-  payment?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  total?: number;
-  items?: string[];
+export interface IOrder {
+	items: string[];
+	payment: string;
+	total: number;
+	address: string;
+	email: string;
+	phone: string;
 }
 
-export interface IBasketData {
-  items: [IItem];
-  total: number;
-  getTotal(items: [IItem]): number;
-  add(id: string): void;
-  remove(id: string): void;
-  checkItem(id: string): boolean;
+export interface IOrderForm {
+	payment: string;
+	address: string;
+	email: string;
+	phone: string;
+}
+
+export interface IActions {
+	onClick: (event: MouseEvent) => void;
 }
