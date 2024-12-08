@@ -31,25 +31,16 @@ export class Basket extends Component<IBasket> {
 	}
 
 	set price(price: number) {
-		this._price.textContent = `${price}` + ' синапсов';
+		this.setText(this._price, `${price} синапсов`);
 	}
 
 	set list(items: HTMLElement[]) {
 		this._list.replaceChildren(...items);
-		this._button.disabled = items.length ? false : true;
+		this.setDisabled(this._button, !items.length);
 	}
 
 	disableButton() {
-		this._button.disabled = true;
-	}
-
-	updateItemIndices() {
-		Array.from(this._list.children).forEach(
-			(item, index) =>
-				(item.querySelector(`.basket__item-index`)!.textContent = (
-					index + 1
-				).toString())
-		);
+		this.setDisabled(this._button, true);
 	}
 }
 
@@ -85,14 +76,14 @@ export class StoreItemBasket extends Component<IProductBasket> {
 	}
 
 	set title(value: string) {
-		this._title.textContent = value;
+		this.setText(this._title, value);
 	}
 
 	set index(value: number) {
-		this._index.textContent = value.toString();
+		this.setText(this._index, value.toString());
 	}
 
 	set price(value: number) {
-		this._price.textContent = `${value} синапсов`;
+		this.setText(this._price, `${value} синапсов`);
 	}
 }

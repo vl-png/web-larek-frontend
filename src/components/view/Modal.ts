@@ -19,8 +19,9 @@ export class Modal extends Component<IModalData> {
 		);
 		this._content = ensureElement<HTMLElement>('.modal__content', container);
 
-		this._closeButton.addEventListener('click', this.close.bind(this));
-		this.container.addEventListener('click', this.close.bind(this));
+		this._closeButton.addEventListener('click', () => this.ModalState(false));
+		this.container.addEventListener('click', () => this.ModalState(false));
+
 		this._content.addEventListener('click', (event) => event.stopPropagation());
 	}
 
@@ -28,20 +29,14 @@ export class Modal extends Component<IModalData> {
 		this._content.replaceChildren(value);
 	}
 
-	open() {
-		this.container.classList.add('modal_active');
-		this.events.emit('modal:open');
-	}
-
-	close() {
-		this.container.classList.remove('modal_active');
-		this.content = null;
-		this.events.emit('modal:close');
+	ModalState(isOpen: boolean) {
+		this.toggleClass(this.container, 'modal_active', isOpen);
+		this.events.emit(isOpen ? 'modal:open' : 'modal:close');
 	}
 
 	render(data: IModalData): HTMLElement {
 		super.render(data);
-		this.open();
+		this.ModalState(true);
 		return this.container;
 	}
 }

@@ -58,32 +58,32 @@ export class Card extends Component<ICard> {
 	}
 
 	set title(value: string) {
-		this._title.textContent = value;
+		this.setText(this._title, value);
 	}
 	get title(): string {
 		return this._title.textContent || '';
 	}
 
 	set image(value: string) {
-		this._image.src = CDN_URL + value;
+		this.setImage(this._image, CDN_URL + value);
 	}
 
 	set selected(value: boolean) {
 		if (!this._button.disabled) {
-			this._button.disabled = value;
+			this.setDisabled(this._button, value);
 		}
 	}
 
 	set price(value: number | null) {
-		this._price.textContent = value ? `${value}` + ' синапсов' : 'Бесценно';
+		this.setText(this._price, value ? `${value} синапсов` : 'Бесценно');
 		if (this._button && !value) {
-			this._button.disabled = true;
+			this.setDisabled(this._button, true);
 		}
 	}
 
 	set category(value: CategoryType) {
-		this._category.textContent = value;
-		this._category.classList.add(this._colors[value]);
+		this.setText(this._category, value);
+		this.toggleClass(this._category, this._colors[value], true);
 	}
 }
 
@@ -103,6 +103,6 @@ export class StoreItemPreview extends Card {
 	}
 
 	set description(value: string) {
-		this._description.textContent = value;
+		this.setText(this._description, value);
 	}
 }

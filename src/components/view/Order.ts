@@ -22,34 +22,42 @@ export class Order extends Form<IOrder> {
 
 		if (this._cash) {
 			this._cash.addEventListener('click', () => {
-				this._cash.classList.add('button_alt-active');
-				this._card.classList.remove('button_alt-active');
+				this.toggleClass(this._cash, 'button_alt-active');
+				this.toggleClass(this._card, 'button_alt-active', false);
+
 				this.onInputChange('payment', 'cash');
 			});
 		}
 		if (this._card) {
 			this._card.addEventListener('click', () => {
-				this._card.classList.add('button_alt-active');
-				this._cash.classList.remove('button_alt-active');
+				this.toggleClass(this._card, 'button_alt-active');
+				this.toggleClass(this._cash, 'button_alt-active', false);
 				this.onInputChange('payment', 'card');
 			});
 		}
 	}
 
 	disableButtons() {
-		this._cash.classList.remove('button_alt-active');
-		this._card.classList.remove('button_alt-active');
+		this.toggleClass(this._cash, 'button_alt-active', false);
+		this.toggleClass(this._card, 'button_alt-active', false);
 	}
 
 	render(data: Partial<IOrder> & IFormState) {
+		super.render(data);
 		const { address, payment } = data;
+
+		this.toggleClass(this._cash, 'button_alt-active', false);
+		this.toggleClass(this._card, 'button_alt-active', false);
+
 		(
 			this.container.querySelector('[name="address"]') as HTMLInputElement
 		).value = address || '';
+
 		if (payment) {
-			if (payment === 'cash') this._cash.classList.add('button_alt-active');
-			if (payment === 'card') this._card.classList.add('button_alt-active');
+			this.toggleClass(this._cash, 'button_alt-active', payment === 'cash');
+			this.toggleClass(this._card, 'button_alt-active', payment === 'card');
 		}
+
 		return this.container;
 	}
 }

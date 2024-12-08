@@ -44,7 +44,7 @@ const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
 const success = new Success('order-success', cloneTemplate(successTemplate), {
 	onClick: () => {
 		events.emit('modal:close');
-		modal.close();
+		modal.ModalState(false);
 	},
 });
 
@@ -96,7 +96,7 @@ events.on('card:toBasket', (item: IProduct) => {
 	item.selected = true;
 	basketModel.addToBasket(item);
 	page.counter = basketModel.getBasketAmount();
-	modal.close();
+	modal.ModalState(false);
 });
 
 events.on('basket:open', () => {
@@ -126,9 +126,26 @@ events.on('basket:open', () => {
 events.on('basket:delete', (item: IProduct) => {
 	basketModel.deleteFromBasket(item.id);
 	item.selected = false;
+
+	const basketItems = basketModel.basket.map((item, index) => {
+		const storeItem = new StoreItemBasket(
+			'card',
+			cloneTemplate(cardBasketTemplate),
+			{
+				onClick: () => events.emit('basket:delete', item),
+			}
+		);
+		return storeItem.render({
+			title: item.title,
+			price: item.price,
+			index: index + 1,
+		});
+	});
+
+	basket.list = basketItems;
 	basket.price = basketModel.getTotalBasketPrice();
 	page.counter = basketModel.getBasketAmount();
-	basket.updateItemIndices();
+
 	if (!basketModel.basket.length) {
 		basket.disableButton();
 	}
